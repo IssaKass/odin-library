@@ -8,7 +8,7 @@ const closeBtns = addMangaDialog.querySelectorAll(".dialog__close");
 const form = addMangaDialog.querySelector("form");
 
 // ===========================
-// 2. Constructor
+// 2. Constructor + Prototype
 // ===========================
 function Manga(title, author, description, chapters, read) {
 	this.id = crypto.randomUUID();
@@ -19,50 +19,65 @@ function Manga(title, author, description, chapters, read) {
 	this.read = read;
 }
 
+Manga.prototype.toggleRead = function () {
+	this.read = !this.read;
+};
+
 // ===========================
 // 3. Library (Data Management)
 // ===========================
 const library = {
 	mangaList: [],
 
-	findManga: function (id) {
-		return this.mangaList.find((manga) => manga.id === id);
-	},
-	addManga: function (manga) {
+	add(manga) {
 		this.mangaList.push(manga);
+		this.render();
 	},
-	removeManga: function (id) {
-		const index = this.mangaList.findIndex((manga) => manga.id === id);
-		if (index !== -1) {
-			this.mangaList.splice(index, 1);
-		}
+	remove(id) {
+		this.mangaList = this.mangaList.filter((manga) => manga.id !== id);
+		this.render();
 	},
-	toggleReadManga: function (id) {
+	toggleRead(id) {
 		const manga = this.mangaList.find((manga) => manga.id === id);
 		if (manga) {
-			manga.read = !manga.read;
+			manga.toggleRead();
+			this.render();
 		}
+	},
+	render() {
+		mangaContainerEl.innerHTML = "";
+		this.mangaList.forEach((manga) =>
+			mangaContainerEl.appendChild(createMangaElement(manga))
+		);
 	},
 };
 
 // ===========================
-// 4. UI Rendering
+// 4. UI Creation
 // ===========================
 function createMangaElement(manga) {
-	const { id, title, author, description, chapters, read } = manga;
+	const el = document.createElement("div");
+	el.className = "manga";
+	el.dataset.id = manga.id;
 
-	const mangaEl = document.createElement("div");
-	mangaEl.className = "manga";
-	mangaEl.dataset.id = id;
-	mangaEl.innerHTML = `
+	el.innerHTML = `
 		<div class="manga__image"></div>
 		<div class="manga__summary">
-			<h3 class="manga__title">${title}</h3>
-			<p class="manga__author">${author}</p>
-			<p class="manga__chapters">${chapters} chapter${chapters === 1 ? "" : "s"}</p>
-			${description ? `<p class="manga__description">${description}</p>` : ""}
+			<h3 class="manga__title">${manga.title}</h3>
+			<p class="manga__author">${manga.author}</p>
+			<p class="manga__chapters">${manga.chapters} chapter${
+		manga.chapters === 1 ? "" : "s"
+	}</p>
+			${
+				manga.description
+					? `<p class="manga__description">${manga.description}</p>`
+					: ""
+			}
 			<footer class="manga__footer">
-				<button type="button" class="btn btn--secondary btn--sm read-btn">
+				<button type="button" class="btn ${
+					manga.read ? "btn--success" : "btn--secondary"
+				} btn--sm read-btn">
+					${manga.read ? "Completed" : "Read Now"}
 				</button>
 				<button type="button" class="btn btn--error btn--sm delete-btn">
 					<i class="fa-solid fa-trash"></i>
@@ -71,55 +86,21 @@ function createMangaElement(manga) {
 		</div>
 	`;
 
-	const readBtn = mangaEl.querySelector(".read-btn");
-	readBtn.textContent = read ? "Completed" : "Read Now";
-	readBtn.classList.toggle("btn--success", read);
-	readBtn.classList.toggle("btn--secondary", !read);
-
-	readBtn.addEventListener("click", () => toggleReadManga(id));
-
-	const editBtn = mangaEl.querySelector(".delete-btn");
-	editBtn.addEventListener("click", () => editManga(id));
-
-	const deleteBtn = mangaEl.querySelector(".delete-btn");
-	deleteBtn.addEventListener("click", () => removeManga(id));
-
-	return mangaEl;
-}
-
-function displayLibrary() {
-	mangaContainerEl.innerHTML = "";
-
-	library.mangaList.forEach((manga) => {
-		const mangaEl = createMangaElement(manga);
-		mangaContainerEl.appendChild(mangaEl);
-	});
-}
-
-// ===========================
-// 5. UI Interaction Handlers
-// ===========================
-function addManga(manga) {
-	library.addManga(manga);
-	displayLibrary();
-}
-
-function toggleReadManga(mangaId) {
-	library.toggleReadManga(mangaId);
-	displayLibrary();
-}
-
-function removeManga(mangaId) {
-	const manga = library.findManga(mangaId);
-
-	const remove = confirm(
-		`Are you sure you want to delete "${manga.title}" manga?`
+	el.querySelector(".read-btn").addEventListener("click", () =>
+		library.toggleRead(manga.id)
 	);
-	if (!remove) return;
+	el.querySelector(".delete-btn").addEventListener("click", () => {
+		if (confirm(`Delete "${manga.title}" manga?`)) {
+			library.remove(manga.id);
+		}
+	});
 
-	library.removeManga(mangaId);
-	displayLibrary();
+	return el;
 }
+
+// ===========================
+// 5. Dialog and Form
+// ===========================
 
 function showDialog() {
 	addMangaDialog.showModal();
@@ -129,57 +110,53 @@ function closeDialog() {
 	addMangaDialog.close();
 }
 
-form.addEventListener("submit", function (event) {
+form.addEventListener("submit", (event) => {
 	event.preventDefault();
 
-	const title = form.title.value;
-	const author = form.author.value;
-	const chapters = Number(form.chapters.value);
-	const description = form.description.value;
-	const read = form.read.checked;
+	const manga = new Manga(
+		form.title.value,
+		form.author.value,
+		form.description.value,
+		Number(form.chapters.value),
+		form.read.checked
+	);
 
-	const manga = new Manga(title, author, description, chapters, read);
-	addManga(manga);
-
+	library.add(manga);
 	form.reset();
-	closeDialog();
+	addMangaDialog.close();
 });
 
-// ===========================
-// 6. Event Listeners
-// ===========================
-addMangaButton.addEventListener("click", showDialog);
-closeBtns.forEach((btn) => btn.addEventListener("click", closeDialog));
+addMangaButton.addEventListener("click", () => addMangaDialog.showModal());
+closeBtns.forEach((btn) =>
+	btn.addEventListener("click", () => {
+		form.reset();
+		addMangaDialog.close();
+	})
+);
 
 // ===========================
-// 7. Initial Manga Entries
+// 6. Initial Entries
 // ===========================
-addManga(
+[
 	new Manga(
 		"Case Closed",
 		"Aoyama Gosho",
 		"A high school detective is turned into a child and continues solving mysteries.",
 		1146,
 		true
-	)
-);
-
-addManga(
+	),
 	new Manga(
 		"One Piece",
 		"Eiichiro Oda",
 		"A pirate sets out on a journey to find the legendary treasure One Piece.",
 		1100,
 		false
-	)
-);
-
-addManga(
+	),
 	new Manga(
 		"Demon Slayer",
 		"Koyoharu Gotouge",
 		"A boy becomes a demon slayer to avenge his family and cure his sister.",
 		205,
 		true
-	)
-);
+	),
+].forEach((manga) => library.add(manga));
