@@ -24,19 +24,23 @@ function Manga(title, author, description, chapters, read) {
 // ===========================
 const library = {
 	mangaList: [],
+
+	findManga: function (id) {
+		return this.mangaList.find((manga) => manga.id === id);
+	},
 	addManga: function (manga) {
 		this.mangaList.push(manga);
 	},
-	toggleReadManga: function (mangaId) {
-		const manga = this.mangaList.find((manga) => manga.id === mangaId);
-		if (manga) {
-			manga.read = !manga.read;
-		}
-	},
-	removeManga: function (mangaId) {
-		const index = this.mangaList.findIndex((manga) => manga.id === mangaId);
+	removeManga: function (id) {
+		const index = this.mangaList.findIndex((manga) => manga.id === id);
 		if (index !== -1) {
 			this.mangaList.splice(index, 1);
+		}
+	},
+	toggleReadManga: function (id) {
+		const manga = this.mangaList.find((manga) => manga.id === id);
+		if (manga) {
+			manga.read = !manga.read;
 		}
 	},
 };
@@ -49,6 +53,7 @@ function createMangaElement(manga) {
 
 	const mangaEl = document.createElement("div");
 	mangaEl.className = "manga";
+	mangaEl.dataset.id = id;
 	mangaEl.innerHTML = `
 		<div class="manga__image"></div>
 		<div class="manga__summary">
@@ -57,8 +62,11 @@ function createMangaElement(manga) {
 			<p class="manga__chapters">${chapters} chapter${chapters === 1 ? "" : "s"}</p>
 			${description ? `<p class="manga__description">${description}</p>` : ""}
 			<footer class="manga__footer">
-				<button type="button" class="btn btn--secondary btn--sm read-btn">Read</button>
-				<button type="button" class="btn btn--error btn--sm delete-btn">Delete</button>
+				<button type="button" class="btn btn--secondary btn--sm read-btn">
+				</button>
+				<button type="button" class="btn btn--error btn--sm delete-btn">
+					<i class="fa-solid fa-trash"></i>
+				</button>
 			</footer>
 		</div>
 	`;
@@ -69,6 +77,9 @@ function createMangaElement(manga) {
 	readBtn.classList.toggle("btn--secondary", !read);
 
 	readBtn.addEventListener("click", () => toggleReadManga(id));
+
+	const editBtn = mangaEl.querySelector(".delete-btn");
+	editBtn.addEventListener("click", () => editManga(id));
 
 	const deleteBtn = mangaEl.querySelector(".delete-btn");
 	deleteBtn.addEventListener("click", () => removeManga(id));
@@ -99,6 +110,13 @@ function toggleReadManga(mangaId) {
 }
 
 function removeManga(mangaId) {
+	const manga = library.findManga(mangaId);
+
+	const remove = confirm(
+		`Are you sure you want to delete "${manga.title}" manga?`
+	);
+	if (!remove) return;
+
 	library.removeManga(mangaId);
 	displayLibrary();
 }

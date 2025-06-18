@@ -150,6 +150,7 @@ button {
 .btn--sm {
 	font-size: 0.875em;
 	padding: var(--space-sm);
+	border-radius: var(--radius-xs);
 }
 
 .input {
