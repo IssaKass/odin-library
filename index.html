@@ -34,70 +34,69 @@
 				</div>
 			</header>
 			<aside class="sidebar">
-				<a href="#" class="logo">
-					<img src="assets/logo.png" alt="Logo Image" class="logo__image" />
-					<span class="logo__label">OdinManga</span>
-				</a>
-				<nav class="nav">
-					<ul class="nav__menu">
-						<li class="nav__item">
-							<a href="" class="nav__link nav__link--active">
-								<i class="nav__icon fa-solid fa-house"></i>
-								<span class="nav__label">Home</span>
-							</a>
-						</li>
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-user"></i>
-								<span class="nav__label">Profile</span>
-							</a>
-						</li>
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-message"></i>
-								<span class="nav__label">Messages</span>
-							</a>
-						</li>
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-clock"></i>
-								<span class="nav__label">History</span>
-							</a>
-						</li>
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-check-to-slot"></i>
-								<span class="nav__label">Tasks</span>
-							</a>
-						</li>
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-users"></i>
-								<span class="nav__label">Community</span>
-							</a>
-						</li>
-					</ul>
-					<ul class="nav__menu">
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-gear"></i>
-								<span class="nav__label">Settings</span>
-							</a>
-						</li>
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-circle-question"></i>
-								<span class="nav__label">Support</span>
-							</a>
-						</li>
-						<li class="nav__item">
-							<a href="" class="nav__link">
-								<i class="nav__icon fa-solid fa-shield"></i>
-								<span class="nav__label">Privacy</span>
-							</a>
-						</li>
-					</ul>
-				</nav>
+				<header class="sidebar__header">
+					<a href="#" class="logo">
+						<img src="assets/logo.png" alt="Logo Image" class="logo__image" />
+						<span class="logo__label">OdinManga</span>
+					</a>
+				</header>
+				<div class="sidebar__body">
+					<nav class="nav">
+						<ul class="nav__menu">
+							<li class="nav__item">
+								<a href="" class="nav__link nav__link--active">
+									<i class="nav__icon fa-solid fa-house"></i>
+									<span class="nav__label">Home</span>
+								</a>
+							</li>
+							<li class="nav__item">
+								<a href="" class="nav__link">
+									<i class="nav__icon fa-solid fa-list"></i>
+									<span class="nav__label">Categories</span>
+								</a>
+							</li>
+							<li class="nav__item">
+								<a href="" class="nav__link">
+									<i class="nav__icon fa-solid fa-book-open-reader"></i>
+									<span class="nav__label">My Library</span>
+								</a>
+							</li>
+							<li class="nav__item">
+								<a href="" class="nav__link">
+									<i class="nav__icon fa-solid fa-bookmark"></i>
+									<span class="nav__label">Saved</span>
+								</a>
+							</li>
+							<li class="nav__item">
+								<a href="" class="nav__link">
+									<i class="nav__icon fa-solid fa-clock"></i>
+									<span class="nav__label">History</span>
+								</a>
+							</li>
+						</ul>
+						<ul class="nav__menu">
+							<li class="nav__item">
+								<a href="" class="nav__link">
+									<i class="nav__icon fa-solid fa-gear"></i>
+									<span class="nav__label">Settings</span>
+								</a>
+							</li>
+							<li class="nav__item">
+								<a href="" class="nav__link">
+									<i class="nav__icon fa-solid fa-circle-question"></i>
+									<span class="nav__label">Support</span>
+								</a>
+							</li>
+							<li class="nav__item">
+								<a href="" class="nav__link">
+									<i class="nav__icon fa-solid fa-right-from-bracket"></i>
+									<span class="nav__label">Logout</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+				<footer class="sidebar__footer">&copy; 2025 IssaKass</footer>
 			</aside>
 			<main class="main-content">
 				<section class="section manga-section">
@@ -162,7 +161,7 @@
 					</div>
 					<div>
 						<label for="read" class="form__label">
-							<input type="checkbox" name="read" id="read" required />
+							<input type="checkbox" name="read" id="read" />
 							Read?
 						</label>
 					</div>

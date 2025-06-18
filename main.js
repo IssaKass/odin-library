@@ -118,9 +118,12 @@ form.addEventListener("submit", function (event) {
 	const author = form.author.value;
 	const chapters = Number(form.chapters.value);
 	const description = form.description.value;
+	const read = form.read.checked;
 
-	const manga = new Manga(title, author, description, chapters, false);
+	const manga = new Manga(title, author, description, chapters, read);
 	addManga(manga);
+
+	form.reset();
 	closeDialog();
 });
 
